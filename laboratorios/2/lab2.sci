@@ -29,7 +29,9 @@ function Prueba()
     plot(x,y)
 endfunction
 
-//Parte 1c
+// En valores cercanos al h = 0, en el momento de hacer raiz(h) / h
+// scilab comienza a estimar los valores de h, 
+// haciendo que la relacion sea érronea, y la grafica se parta al final
 function Parte1C()
     f= sqrt
     x=1
