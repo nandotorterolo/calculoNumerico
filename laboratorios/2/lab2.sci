@@ -29,7 +29,7 @@ function Prueba()
     plot(x,y)
 endfunction
 
-//Parte 1c, donde se rompe al final
+//Parte 1c
 function Parte1C()
     f= sqrt
     x=1
