@@ -32,6 +32,7 @@ endfunction
 // En valores cercanos al h = 0, en el momento de hacer raiz(h) / h
 // scilab comienza a estimar los valores de h, 
 // haciendo que la relacion sea érronea, y la grafica se parta al final
+// esto es debido al llamado epsilon de maquina, que es el numero mas pequeño que la maquina sporta
 function Parte1C()
     f= sqrt
     x=1
