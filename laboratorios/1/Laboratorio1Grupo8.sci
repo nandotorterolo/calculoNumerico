@@ -7,21 +7,20 @@
 
 // Se debe cambiar X por su número
 function nombre=nombreDeGrupoX()
-    nombre="Grupo_Torterolo_DaRosa";
+    nombre="Grupo_Torterolo_DaRosa_Fernandez";
 endfunction
 
 // Se debe cambiar X por su número
-function numero=numeroDeGrupoX()
+function numero=numeroDeGrupo8()
     numero=8;
 endfunction
 
 // Se debe cambiar X por su número
-function participantes=participantesGrupoX()
-    participantes=['FernandoTorterolo', 'MartinDaRosa', 'Alumno 3'];
+function participantes=participantesGrupo8()
+    participantes=['FernandoTorterolo', 'MartinDaRosa', 'PabloFernandez'];
 endfunction
 
 // Se debe cambiar X por su número
-//function jugada=estrategiaGrupoX(Tablero, miEquipo)
 function jugada=estrategiaGrupo8(Tablero, miEquipo)
     jugada = ganaria(Tablero);
     if (jugada ~= -8) then
