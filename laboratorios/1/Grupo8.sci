@@ -2,11 +2,10 @@
 // Cálculo Numérico
 // Eduardo Senturión, Federico González
 // Laboratorio 1
-// solo se debe tocar este archivo, no tocar el otro. Alegir un numero al azar y poner todos los participantes
 
 
 // Se debe cambiar X por su número
-function nombre=nombreDeGrupoX()
+function nombre=nombreDeGrupo8()
     nombre="Grupo_Torterolo_DaRosa_Fernandez";
 endfunction
 
