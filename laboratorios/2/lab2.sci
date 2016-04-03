@@ -10,6 +10,11 @@ function y=diferenciacionCentral(f,h,x)
     y= (f(x+h) - f(x-h)) ./ (2*h)
 endfunction 
 
+// Derivada Central
+function y=diferenciacionCentralSeg(f,h,x)
+    y= (f(x+h) - 2*f(x) + f(x-h)) ./ (h^2)
+endfunction 
+
 // Error Absoluto
 function ea=errorAbsoluto(x,xReal)
     ea = abs(x -xReal)
@@ -41,4 +46,9 @@ function Parte1C()
     h= p^(-k)
     y=diferenciacionProgresiva(f,h,x)
     plot(k,y)
+endfunction
+
+///EJ 3
+function ty=Taylor(fn, a, h)
+	ty = fn(a) + (diferenciacionCentral(fn, h, a)*h) + (diferenciacionCentralSeg(fn, h, a))*(h^2/2)
 endfunction
