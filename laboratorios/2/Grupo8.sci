@@ -1,9 +1,19 @@
-// Universidad Católica del Uruguay
-// Cálculo Numérico
-// Eduardo Senturión, Federico González
-// Laboratorio 1
-// solo se debe tocar este archivo, no tocar el otro. Alegir un numero al azar y poner todos los participantes
-// participantes=['FernandoTorterolo', 'MartinDaRosa', 'PabloFernandez'];
+// Laboratorio 2
+
+// *****************************************
+// * Universidad Católica del Uruguay
+// * Cálculo Numérico 2016
+// * Laboratorio 2
+// * Eduardo Senturión - Federico González
+// *****************************************
+
+// Esta función se utiliza para saber quienes son los participantes del grupo
+function Grupo=AlumnosDelGrupo()
+    Grupo = {};
+    Grupo.Nombre1 = "FernandoTorterolo";
+    Grupo.Nombre2 = "MartinDaRosa";
+    Grupo.Nombre3 = "PabloFernandez";
+endfunction
 
 // Escriba una función scilab y=derivadaCoc(f,x,ℎ) que reciba una función real f?, un
 // número real x y un paso de aproximación h; y determine la aproximación de cociente
@@ -54,4 +64,36 @@ function [k,y]=Parte1C()
     h=p^(-k)
     y=derivadaCoc(f,h,x)
     plot(k,y,k,ones(100,1)*0.5)  
+endfunction
+
+
+
+// Se debe implementar la función de richardson para mejorar el valor la derivada de cocientes incrementales
+function y=richardson(phi,h,n) 
+    x = 5;
+    printf("Richardson para x = 5")
+    Aux=zeros(n,n);
+    nivel = 1;
+    err = %inf;
+    while (nivel <= n)
+        Aux(nivel,1) = (phi(x+(h/(2^(nivel-1))))-phi(x))/(h/(2^(nivel-1)));
+        if (nivel > 1)
+            for (i=2:1:nivel)
+                Aux(nivel-i+1,i) = (((2^(i-1))*Aux(nivel-i+2,i-1)) - Aux(nivel-i+1,i-1)) / ((2^(i-1))-1);
+                disp(Aux)
+            end
+            err = abs(Aux(1,nivel) - Aux(2,nivel-1))
+        end
+        nivel = nivel+1;
+    end
+    y= Aux(1,nivel-1)
+endfunction
+
+// Se debe implementar una función que estime el valor de una funcion utilizando taylor
+// fpri es la derivada primera
+// fpri es la derivada segunda
+// f(x0) = f0
+// f(xf) es el valor que se debe retornar en y.
+function y=taylor(fpri, fseg, f0, x0, xf)
+    ty = f0 + (fpri(x0)*xf-x0) + (fseg(x0))*(xf-x0^2/2)
 endfunction
