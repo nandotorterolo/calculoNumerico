@@ -54,6 +54,30 @@ function y = escalerizacionGaussiana()
 	y = A
 endfunction
 
+//// hace la escalerizacion recursiva, hay que agregar solamente la 
+// parte de la escalerizacion
+function A=intercambiarMaximo(A)
+    [f c] = size(A)
+    // u= maximo del vector; i= fila del maximo
+    [u i]=max(A(1:f, 1))
+
+    //intercambio la primer fila con la fila que tiene el 
+        //valor mayor en la primer columna de la matriz
+    A([1,i],:)=A([i,1],:)
+    
+    
+    //aca hay que hacer la escalerizacion sobre toda la matriz!!!
+    A(2:f,1)=0
+    //aca termina la escalerizacion
+
+// parte recursiva
+    if (f > 2) then
+        A(2:f, 2:c)=intercambiarMaximo(A(2:f,2:c))
+    end
+
+endfunction
+
+
 // Implementacion de escalerizacion utilizando pivot
 function y = escalerizacionPivot(A, b)
 endfunction
