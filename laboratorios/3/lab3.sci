@@ -20,9 +20,9 @@ endfunction
 // Implementacion de escalerizacion gaussiana
 function y = escalerizacionGaussiana()
 	A = [ 2  3  1 -2  -5 -3; 
-		  1 -2  19 2   5 -9; 
-		  8 -2  1  2   3  3; 
-		  5 -6  20 10  5  3; 
+              1 -2  19 2   5 -9; 
+              8 -2  1  2   3  3; 
+              5 -6  20 10  5  3; 
 	      3  8  5  32  2 12];
 
 	[f,c] = size(A);
