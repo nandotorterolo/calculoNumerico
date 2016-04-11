@@ -22,6 +22,7 @@ endfunction
 //Entrada: 
 // A - [n x n] Double
 // b - [n x 1] Double
+
 function y = escalerizacionGaussiana(A, b)
     
     M = cat(2,A,b) // concatenation of the input arguments A,b
@@ -39,6 +40,41 @@ function y = escalerizacionGaussiana(A, b)
 //			x = input("Continuar");
 		end 
 	end
+
+	y = M
+    
+endfunction
+
+function y = escalerizacionGaussiana2(A, b)
+    
+    M = cat(2,A,b) // concatenation of the input arguments A,b
+//    disp(M)
+    
+    [f,c] = size(M);
+    fila = 1;
+	for numCol = 1:c-2
+        porcionColumnaActual = M([fila:f],numCol);
+        [valor, idx] = max(abs(porcionColumnaActual));
+        if valor <> 0 then // no necesito cambiar de columna
+            if porcionColumnaActual(1) == 0 then //tengo que poner un valor <> 0 en la fila
+                salir = 0
+                contador = 0
+                while salir==0 
+                    if porcionColumnaActual(contador +1)<>0 then
+                        M = swapFila(M, fila, fila + contador);
+                        salir = 1;
+                    else
+                        contador = contador +1;
+                    end
+                end
+            end
+            for numFila = fila + 1:f
+                M = escaleraCero(M, numCol, numFila);
+            end
+//			x = input("Continuar");
+    end 
+    fila = fila+1;
+    end
 
 	y = M
     
@@ -89,8 +125,8 @@ function y = escalerizacion2Pivot(A, b)
 //    disp(M)
     
     [f,c] = size(M);
+    fila = 1;
 	for numCol = 1:c-2
-        fila = numCol;
 
 		//Desde pivote hasta final filas		
 		porcionColumnaActual = M([fila:f],numCol);
@@ -115,7 +151,7 @@ function y = escalerizacion2Pivot(A, b)
 //			disp(M);
 //			x = input("Continuar");
 		end 
-        
+        fila = fila +1;
 	end
 
 	y = M
@@ -168,6 +204,19 @@ function test1EscGaussiana()
     b=[2;6;3]
     y = escalerizacionGaussiana(A,b)
     disp(y);
+endfunction
+
+function test2EscGaussiana()
+    A =[0 2 4; 0 7 8; 0 11 12];
+    b=[1;2;3];
+    
+    disp(escalerizacionGaussiana([1 3 4;2 7 9;9 8 7],[2;6;3]));
+    disp(escalerizacionGaussiana2([1 3 4;2 7 9;9 8 7],[2;6;3]));
+    disp(escalerizacionGaussiana([0 2 4; 0 7 8; 0 11 12],[1;2;3]));
+    disp(escalerizacionGaussiana2([0 2 4; 0 7 8; 0 11 12],[1;2;3]));
+    disp(escalerizacionGaussiana([0 2 0 0 0; 1 1 2 0 0;1 1 1 2 0; 1 1 1 1 2; 2 0 0 0 0], [8;16;16;16;16]));
+    disp(escalerizacionGaussiana2([0 2 0 0 0; 1 1 2 0 0;1 1 1 2 0; 1 1 1 1 2; 2 0 0 0 0], [8;16;16;16;16]));
+
 endfunction
 
 function test1EscPivot()
