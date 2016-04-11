@@ -76,6 +76,44 @@ function y = escalerizacionPivot(A, b)
 	y = M
 endfunction
 
+function y = escalerizacion2Pivot(A, b)
+    M = cat(2,A,b) // concatenation of the input arguments A,b
+//    disp(M)
+    
+    [f,c] = size(M);
+	for numCol = 1:c-2
+        fila = numCol;
+
+		//Desde pivote hasta final filas		
+		porcionColumnaActual = M([fila:f],numCol);
+		//El mayor absoluto		
+        pivote = 0;
+		[pivote, idx] = max(abs(porcionColumnaActual));
+        //para avanzar si no hay valores no nulos en la columna
+        while pivote == 0 & numCol<c-1
+            numCol = numCol +1;
+            //Desde pivote hasta final filas		
+            porcionColumnaActual = M([fila:f],numCol);
+            //El mayor absoluto		
+            [pivote, idx] = max(abs(porcionColumnaActual));
+        end
+		//Largo de la porcion actual --		
+		[largo, ancho] = size(porcionColumnaActual);
+		//--para saber el indice con respecto a toda la matriz		
+		verdaderoIdx = idx + (f - largo);
+		M = swapFila(M, verdaderoIdx, fila);
+		for numFila = fila + 1:f
+			M = escaleraCero(M, numCol, numFila);
+//			disp(M);
+//			x = input("Continuar");
+		end 
+        
+	end
+
+	y = M
+endfunction
+
+
 // Implementacion de resolucion del sistema Ax = b utilizando factorizacion LU
 function y = resolucionLU(A, b)
     [L, U] = LU(A);
@@ -105,8 +143,10 @@ function [L, U] = LU(A, b)
 
 
 function A1 = escaleraCero(A, fAct, fEsc)
-	cociente = - A(fEsc, fAct) / A(fAct, fAct);
-	A(fEsc,:) = cociente * A(fAct,:) + A(fEsc,:);
+	if (A(fAct, fAct) <>0 ) then //evita la division por cero
+        cociente = - A(fEsc, fAct) / A(fAct, fAct);
+        A(fEsc,:) = cociente * A(fAct,:) + A(fEsc,:);
+    end
 	A1 = A
 endfunction
 
@@ -128,6 +168,20 @@ function test1EscPivot()
     b=[2;6;3]
     y = escalerizacionPivot(A,b)
     disp(y);
+endfunction
+
+
+function test2EscPivot()
+    A =[0 2 4; 0 7 8; 0 11 12];
+    b=[1;2;3];
+    y = escalerizacionPivot(A,b)
+    disp(y);
+    z = escalerizacion2Pivot(A,b)
+    disp(z);
+    x=escalerizacion2Pivot([0 2 0 0 0; 1 1 2 0 0;1 1 1 2 0; 1 1 1 1 2; 2 0 0 0 0], [8;16;16;16;16]);
+    disp(x);
+    v=escalerizacionPivot([0 2 0 0 0; 1 1 2 0 0;1 1 1 2 0; 1 1 1 1 2; 2 0 0 0 0], [8;16;16;16;16])
+    disp(v);
 endfunction
 
 function test1ResolucionLU()
