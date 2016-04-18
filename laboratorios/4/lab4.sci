@@ -23,13 +23,13 @@ function x = General(A, b, Q, tol)
     x=[]
     [n,m] = size (A);
     X = zeros(n,1);
-
+    disp (X, "X");
     R= inv(Q)*(Q-A);
     bR = inv(Q)*b;
     X = [X R*X(:,$) + bR];
-    disp (X);
-    disp (R);
-    disp (bR);
+    disp (X, "X");
+    disp (R, "R");
+    disp (bR,"bR");
     contador = 5;
     norma = 0;
     while norm(X(:,$) - X(:,$-1)) > tol & contador >0
