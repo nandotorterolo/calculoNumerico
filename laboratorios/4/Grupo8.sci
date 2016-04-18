@@ -20,6 +20,15 @@ endfunction
 // tol máximo error soportado
 // x resultado de Ax = b
 function x = General(A, b, Q, tol)
+    
+    [n,m] = size (A);
+    X = zeros(n,1);
+    R= inv(Q)*(Q-A);
+    bR = inv(Q)*b;
+    X = [X R.X(:,$) + bR];
+    while norm(X(:,$) - X(:,$-1)) > tol
+        X = [X R.X(:,$) + bR];        
+    end
 endfunction
 
 // Implementacion de método Richardson para sistemas lineales.
@@ -64,3 +73,9 @@ function [L, U, D] = LUD(A)
     end
 endfunction
  
+ function test1General ()
+     A = [] 
+     b= []
+     tol = 1
+     General()
+ endfunction
