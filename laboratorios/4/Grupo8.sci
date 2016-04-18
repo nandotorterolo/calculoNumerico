@@ -23,11 +23,15 @@ function x = General(A, b, Q, tol)
     
     [n,m] = size (A);
     X = zeros(n,1);
+
     R= inv(Q)*(Q-A);
     bR = inv(Q)*b;
-    X = [X R.X(:,$) + bR];
+    X = [X R*X(:,$) + bR];
+    disp (X);
+    disp (R);
+    disp (bR);
     while norm(X(:,$) - X(:,$-1)) > tol
-        X = [X R.X(:,$) + bR];        
+        X = [X R*X(:,$) + bR];        
     end
 endfunction
 
@@ -74,8 +78,8 @@ function [L, U, D] = LUD(A)
 endfunction
  
  function test1General ()
-     A = [] 
-     b= []
+     A = [2 -3;4 1] 
+     b= [-2; 24]
      tol = 1
-     General()
+     General(A, b, tol)
  endfunction
