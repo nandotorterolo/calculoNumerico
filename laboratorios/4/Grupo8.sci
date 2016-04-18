@@ -20,7 +20,7 @@ endfunction
 // tol máximo error soportado
 // x resultado de Ax = b
 function x = General(A, b, Q, tol)
-    
+    x=[]
     [n,m] = size (A);
     X = zeros(n,1);
 
@@ -30,14 +30,27 @@ function x = General(A, b, Q, tol)
     disp (X);
     disp (R);
     disp (bR);
-    while norm(X(:,$) - X(:,$-1)) > tol
-        disp("norma")
-        disp(norm(X(:,$) - X(:,$-1)));
+    contador = 5;
+    norma = 0;
+    while norm(X(:,$) - X(:,$-1)) > tol & contador >0
+//        disp("norma")
+//        disp(norm(X(:,$) - X(:,$-1)));
 
         X = [X R*X(:,$) + bR];        
+//        disp("X")
+//        disp(X);
+        contador = contador-1
+    end
+    if contador == 0 then
+        norma = norm(X(:,$) - X(:,$-1));
+        disp("No converge")
+        disp(norma)
         disp("X")
         disp(X);
+    else
+        x=X(:,$);
     end
+    
 endfunction
 
 // Implementacion de método Richardson para sistemas lineales.
