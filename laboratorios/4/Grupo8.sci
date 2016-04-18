@@ -31,7 +31,12 @@ function x = General(A, b, Q, tol)
     disp (R);
     disp (bR);
     while norm(X(:,$) - X(:,$-1)) > tol
+        disp("norma")
+        disp(norm(X(:,$) - X(:,$-1)));
+
         X = [X R*X(:,$) + bR];        
+        disp("X")
+        disp(X);
     end
 endfunction
 
