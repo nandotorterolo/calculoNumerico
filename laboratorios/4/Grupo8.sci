@@ -21,21 +21,23 @@ endfunction
 // x resultado de Ax = b
 function x = General(A, b, Q, tol)
     x=[]
+    disp(A\b, "resultado esperado")
+    disp(A, "A")
     [n,m] = size (A);
     X = zeros(n,1);
-
+//    X = [5;2];
+    disp (X, "X inicial");
     R= inv(Q)*(Q-A);
     bR = inv(Q)*b;
     X = [X R*X(:,$) + bR];
-    disp (X);
-    disp (R);
-    disp (bR);
-    contador = 5;
+    //disp (X, "X siguiente");
+    //disp (R, "R inicial");
+    //disp (inv(Q), "inversa de Q")
+    //disp (bR,"bR inicial");
+    contador = 30;
     norma = 0;
     while norm(X(:,$) - X(:,$-1)) > tol & contador >0
-//        disp("norma")
-//        disp(norm(X(:,$) - X(:,$-1)));
-
+       // disp(norm(X(:,$) - X(:,$-1)) ,"norma")
         X = [X R*X(:,$) + bR];        
 //        disp("X")
 //        disp(X);
@@ -48,9 +50,13 @@ function x = General(A, b, Q, tol)
         disp("X")
         disp(X);
     else
+        norma = norm(X(:,$) - X(:,$-1));
+        disp(norma, "CONVERGE CARAJO; NORMA:")
+        disp("X")
+        disp(X);    
         x=X(:,$);
     end
-    
+   
 endfunction
 
 // Implementacion de método Richardson para sistemas lineales.
@@ -96,8 +102,9 @@ function [L, U, D] = LUD(A)
 endfunction
  
  function test1General ()
-     A = [3 -2;1 2] 
-     b= [11; 9]
-     tol = 1
-     General(A, b, tol)
+     A = [10 -1 2 0; -1 11 -1 3; 2 -1 10 -1;     0 3 -1 8] 
+     b= [6; 25; -11; 15]
+     tol = 0.0001
+     [L,U,D]=LUD(A);
+     General(A, b, L, tol)
  endfunction

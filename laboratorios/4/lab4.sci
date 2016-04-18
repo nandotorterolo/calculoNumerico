@@ -21,8 +21,11 @@ endfunction
 // x resultado de Ax = b
 function x = General(A, b, Q, tol)
     x=[]
+    disp(A\b, "resultado esperado")
+    
     [n,m] = size (A);
-    X = zeros(n,1);
+//    X = zeros(n,1);
+    X = [5;2];
     disp (X, "X");
     R= inv(Q)*(Q-A);
     bR = inv(Q)*b;
@@ -33,9 +36,7 @@ function x = General(A, b, Q, tol)
     contador = 5;
     norma = 0;
     while norm(X(:,$) - X(:,$-1)) > tol & contador >0
-//        disp("norma")
-//        disp(norm(X(:,$) - X(:,$-1)));
-
+        disp(norm(X(:,$) - X(:,$-1)) ,"norma")
         X = [X R*X(:,$) + bR];        
 //        disp("X")
 //        disp(X);
