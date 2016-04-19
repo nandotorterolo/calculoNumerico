@@ -20,30 +20,22 @@ endfunction
 // tol máximo error soportado
 // x resultado de Ax = b
 function x = General(A, b, Q, tol)
+    contador = 30; /// cuantas veces se va a ejecutar la interacion como max
     x=[]
-    disp(A\b, "resultado esperado")
-    disp(A, "A")
     [n,m] = size (A);
     X = zeros(n,1);
-//    X = [5;2];
-    disp (X, "X inicial");
     R= inv(Q)*(Q-A);
     bR = inv(Q)*b;
     X = [X R*X(:,$) + bR];
-    //disp (X, "X siguiente");
-    //disp (R, "R inicial");
-    //disp (inv(Q), "inversa de Q")
-    //disp (bR,"bR inicial");
-    contador = 30;
     norma = 0;
     while norm(X(:,$) - X(:,$-1)) > tol & contador >0
-       // disp(norm(X(:,$) - X(:,$-1)) ,"norma")
-        X = [X R*X(:,$) + bR];        
-//        disp("X")
-//        disp(X);
         contador = contador-1
+        X = [X R*X(:,$) + bR];        
+        if(norm(X(:,$) - X(:,$-1)) < tol) then
+            contador =0
+        end
     end
-    if contador == 0 then
+    if(norm(X(:,$) - X(:,$-1)) > tol) then
         norma = norm(X(:,$) - X(:,$-1));
         disp("No converge")
         disp(norma)
@@ -51,12 +43,10 @@ function x = General(A, b, Q, tol)
         disp(X);
     else
         norma = norm(X(:,$) - X(:,$-1));
-        disp(norma, "CONVERGE CARAJO; NORMA:")
-        disp("X")
-        disp(X);    
+        disp(norma, "CONVERGE  metodo general; NORMA:")
         x=X(:,$);
     end
-   
+       
 endfunction
 
 // Implementacion de método Richardson para sistemas lineales.
@@ -73,6 +63,59 @@ endfunction
 // tol máximo error soportado
 // x resultado de Ax = b
 function x = Jacobi(A, b, tol)
+
+    x=[]
+    maxIter = 50
+    [n,m] = size (A);
+    [L,U,D] = LUD(A)
+    X = zeros(n,1);
+    converge = 0;
+    ////mejorar esto
+        Xnuevo = zeros(n,1);
+        for i=1:n
+            sumatoria = 0;
+            for j=1:n
+                if (i<>j) then
+                    sumatoria = sumatoria + (A(i,j)* X(j,1));
+                end
+
+            end    
+            
+            Xnuevo(i)=(1/A(i,i))*(b(i) -sumatoria);
+        end
+        X = [X Xnuevo]    ;
+    
+    ////fin mejorar esto    
+    
+    
+    while norm(X(:,$) - X(:,$-1)) > tol & maxIter >0
+        Xnuevo = zeros(n,1);
+        for i=1:n
+            sumatoria = 0;
+            for j=1:n
+                if (i<>j) then
+                    sumatoria = sumatoria + (A(i,j)* X(j,$-1));
+                end
+
+            end    
+            
+            Xnuevo(i)=(1/A(i,i))*(b(i) -sumatoria);
+        end
+        X = [X Xnuevo]    ;
+        maxIter = maxIter -1;
+        
+    end
+    if norm(X(:,$) - X(:,$-1)) > tol then
+        norma = norm(X(:,$) - X(:,$-1));
+        disp(norma, "No converge; norma:")
+        disp("X")
+        disp(X);
+    else
+        norma = norm(X(:,$) - X(:,$-1));
+        disp(norma, "Converge metodo jacobi; NORMA:")
+        x=X(:,$);
+    end
+
 endfunction
 
 // Implementacion de método Gauss-Seidel para sistemas lineales.
@@ -100,11 +143,29 @@ function [L, U, D] = LUD(A)
         U(i, i:n) = A(i, i:n);
     end
 endfunction
- 
+
  function test1General ()
      A = [10 -1 2 0; -1 11 -1 3; 2 -1 10 -1;     0 3 -1 8] 
      b= [6; 25; -11; 15]
-     tol = 0.0001
+     tol = 0.01
      [L,U,D]=LUD(A);
-     General(A, b, L, tol)
+     disp(General(A, b, L, tol),"Resultado General")
+     disp(A\b, "resultado esperado")
  endfunction
+
+
+ function test1Jacobi ()
+     A = [10 -1 2 0; -1 11 -1 3; 2 -1 10 -1;     0 3 -1 8] 
+     b= [6; 25; -11; 15]
+     tol = 0.00001
+//     [L,U,D]=LUD(A);
+     disp(Jacobi(A, b, tol),"Resultado Jacobi")
+     disp(A\b, "resultado esperado")
+
+ endfunction
+
+
+function todosLosTest()
+    test1General();
+    test1Jacobi();
+endfunction
