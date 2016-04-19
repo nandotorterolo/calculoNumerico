@@ -55,6 +55,56 @@ endfunction
 // tol máximo error soportado
 // x resultado de Ax = b
 function x = Richardson(A, b, tol)
+    x=[]
+    maxIter = 50
+    [n,m] = size (A);
+    X = zeros(n,1);
+    converge = 0;
+    ////mejorar esto
+        Xnuevo = zeros(n,1);
+        for i=1:n
+            sumatoria = 0;
+            for j=1:n
+                if (i<>j) then
+                    sumatoria = sumatoria + (A(i,j)* X(j,$));
+                end
+
+            end    
+            
+            Xnuevo(i)=b(i) - (A(i,i)-1)*X(i,$) -sumatoria;
+        end
+        X = [X Xnuevo]    ;
+    ////fin mejorar esto    
+    
+    
+    while norm(X(:,$) - X(:,$-1)) > tol & maxIter >0
+        Xnuevo = zeros(n,1);
+        for i=1:n
+            sumatoria = 0;
+            for j=1:n
+                if (i<>j) then
+                    sumatoria = sumatoria + (A(i,j)* X(j,$));
+                end
+
+            end    
+            
+            Xnuevo(i)=b(i) - (A(i,i)-1)*X(i,$)  -sumatoria;
+        end
+        X = [X Xnuevo]    ;
+        maxIter = maxIter -1;
+        
+    end
+    if norm(X(:,$) - X(:,$-1)) > tol then
+        norma = norm(X(:,$) - X(:,$-1));
+        disp(norma, "No converge; norma:")
+        disp("X")
+        disp(X);
+    else
+        norma = norm(X(:,$) - X(:,$-1));
+        disp(norma, "Converge metodo richardson; NORMA:")
+        x=X(:,$);
+    end
+    
 endfunction
 
 // Implementacion de método Jacobi para sistemas lineales.
@@ -232,4 +282,6 @@ function todosLosTest()
      disp(General(A, b, L, tol),"Resultado General")
      disp(Jacobi(A, b, tol),"Resultado Jacobi")
      disp(GaussSeidel(A, b, tol),"Resultado Gauss-Seidel")
+     disp(A\b, "resultado esperado")
+     disp(Richardson(A, b, tol),"Resultado Richardson")
 endfunction
