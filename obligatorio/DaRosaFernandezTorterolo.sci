@@ -10,72 +10,58 @@ m = 0.450         //  masa en gramos
 b = 1.71* 10^(-5) //  viscosidad del aire https://es.wikipedia.org/wiki/Aire
 h = 0.01          //  instante de tiempo en s
 
-// Determina la posición y la velocidad en el eje x
+
+// Determina la velocidad en el eje X utilizando derivada central o cociente incremental
+// vant: valor anterior para el uso de derivada central
+// vant = vsig: valor para utilizar cociente incremental
+// mult: 1 para cociente incremental, 2 para derivada central
+function res=funcVelX(vant, vsig, mult, e)
+    res = (-b * h * mult * vsig - e * mult * h + m * vant) / (m)
+endfunction
+
+// Determina la velocidad en el eje Y utilizando derivada central o cociente incremental
+// vant: valor anterior para el uso de derivada central
+// vant = vsig: valor para utilizar cociente incremental
+// mult: 1 para cociente incremental, 2 para derivada central
+function res=funcVelY(vant, vsig, mult, e)
+    res=( - b * mult * h * vsig + m * vant) / m
+endfunction
+
+// Determina la velocidad en el eje Z utilizando derivada central o cociente incremental
+// vant: valor anterior para el uso de derivada central
+// vant = vsig: valor para utilizar cociente incremental
+// mult: 1 para cociente incremental, 2 para derivada central
+function res=funcVelZ(vant, vsig, mult, e)
+    res = (-b * mult * h * vsig + m * g * mult * h + m * vant) / m 
+endfunction
+
+
+
+
+// Determina la posición y la velocidad en el eje de trabajo
 // p0: pocicion inicial
 // v0: velocidad inicial
-// alfa: angulo que se le pego a la pelota, ver imagen en la entrega
 // n: cantidad de iteraciones
 // e: efecto magnus
-function [posX , velX]=posVelX(p0, v0, alfa, n, e)
-    posX(1) = p0(1)
-    velX(1) = v0 * cos(alfa)
+// velFunc: función que calcula la velocidad
+function [pos , vel]=posVel(p0, v0, n, e, velFunc)
+    pos(1) = p0
+    vel(1) = v0 
 
-    posX(2) = (velX(1) * h) + posX(1)
-    velX(2) = (-b * h * velX(1) - e * h + m * velX(1)) / (m)
+    pos(2) = (vel(1) * h) + pos(1)
+    vel(2) = velFunc(vel(1), vel(1), 1, e) //usa cociente incremental
     
-    posX(3) = velX(2) * 2 * h + posX(1)
+    pos(3) = vel(2) * 2 * h + pos(1)
     
     for i=3:n  
-        velX(i) = (-b * 2 * h * velX(i-1) - e * 2 * h + m * velX(i-2)) / (m) 
-        posX(i+1) = velX(i) * 2 * h + posX(i-1)
+        vel(i) = velFunc(vel(i-1), vel(i-2), 2, e) //usa derivada central
+        pos(i+1) = vel(i) * 2 * h + pos(i-1)
     end
-
-    velX(i) = (-b * 2 * h * velX(i-1) - e* 2 * h + m * velX(i-2)) / (m)
+    vel(i) = velFunc(vel(i-1), vel(i-2), 2, e)    
 
 endfunction
 
-// Determina la posición y la velocidad en el eje Y
-// p0: pocicion inicial
-// v0: velocidad inicial
-// alfa: angulo que se le pego a la pelota, ver imagen en la entrega
-// n: cantidad de iteraciones
-function [posY , velY]=posVelY(p0, v0, alfa, n)
-    posY(1) = p0(2)
-    velY(1) = v0 * tan(alfa)    
-    
-    posY(2) = (velY(1) * h) + posY(1)
-    velY(2) = (m * velY(1) - b * h * velY(1)) / m
-    
-    posY(3) = velY(2) * 2 * h + posY(1)
 
-    for i=3:n
-        velY(i) = (m * velY(i-2) - b * 2 * h * velY(i-1)) / m
-        posY(i+1) = velY(i) * 2 * h + posY(i-1)
-    end
-
-    velY(n+1) = (m * velY(n-2) - b * 2 * h * velY(n-1)) / m
-endfunction
-
-// Determina la posición y la velocidad en el eje Z
-// p0: pocicion inicial
-// v0: velocidad inicial
-// alfa: angulo que se le pego a la pelota, ver imagen en la entrega
-// n: cantidad de iteraciones
-function [posZ , velZ]=posVelZ(p0, v0, alfa, n)
-    
-    posZ(1) = p0(3);
-    velZ(1) = v0 * sin(alfa); 
-    
-    posZ(2) = (velZ(1) * h) + posZ(1)
-    velZ(2) = (-b * h *velZ(1) + g * h * m + m * velZ(1)) / m 
-    
-    posZ(3) = velZ(2) * 2 * h + posZ(1)
-        
-    for i=3:n
-        velZ(i) = (-b * 2 * h * velZ(i-1) + g * 2 * h * m + m * velZ(i-2)) / m 
-        posZ(i+1) = velZ(i) * 2 * h + posZ(i-1)
-    end
-endfunction
 
 
 // Determine velocidad inicial en Eje X
@@ -157,6 +143,31 @@ function vel0Z = velocidadEjeZ(p0, alfa, n, pf)
     vel0Z = sol(n+1) / sin(alfa)
 endfunction
 
+
+function calculaTrayectoria(p0, n, v0, alfa, e)
+    vx = v0 * cos(alfa)
+    [posX,velX] = posVel(p0(1), vx, n, e, funcVelX)
+    // disp(posX)
+    // disp(velX)
+    
+    vy = v0 * tan(alfa)
+    [posY,velY] = posVel(p0(2), vy, n, e, funcVelY)
+    // disp(posY)
+    // disp(velY)
+    
+    vz = v0 * sin(alfa)    
+     [posZ,velZ] = posVel(p0(3), vz, n, e, funcVelZ)
+    // disp(posZ)
+    // disp(velZ)
+    
+    param3d(posX, posY, posZ, flag=[1,4], ebox=[-5,5,-8,5,-1,10])
+    e=gce() //the handle on the 3D polyline
+    e.foreground=color('red');
+    
+    // horizontal axis
+    drawaxis(x=-4:5,y=0,dir='u',tics='v')
+endfunction
+
 // Implementar un algoritmo que calcule y grafique la trayectoria de la pelota hasta que llegue a los palos
 function parteDosNoConvergeGol()
     p0 = [-15, -15, 0]  // posicion de la pelota (x,y,z)
@@ -165,17 +176,7 @@ function parteDosNoConvergeGol()
     alfa = -150           // angulo en grados
     e = -12              // efecto magnus
     
-    [posX,velX] = posVelX(p0, v0, alfa,  n, e)
-    // disp(posX)
-    // disp(velX)
-    
-    [posY,velY] = posVelY(p0, v0, alfa,  n)
-    // disp(posY)
-    // disp(velY)
-    
-     [posZ,velZ] = posVelZ(p0, v0, alfa,  n)
-    // disp(posZ)
-    // disp(velZ)
+    calculaTrayectoria(p0, n, v0, alfa, e)
     
 endfunction
 
@@ -189,25 +190,7 @@ function parteDosConvergeGol()
     alfa = -200         // angulo en grados
     e = 12              // efecto magnus
     
-    [posX,velX] = posVelX(p0, v0, alfa,  n, e)
-    // disp(posX)
-    // disp(velX)
-    
-    [posY,velY] = posVelY(p0, v0, alfa,  n)
-    // disp(posY)
-    // disp(velY)
-    
-     [posZ,velZ] = posVelZ(p0, v0, alfa,  n)
-    // disp(posZ)
-    // disp(velZ)
-    
-
-    param3d(posX, posY, posZ, flag=[1,4], ebox=[-5,5,-8,5,-1,10])
-    e=gce() //the handle on the 3D polyline
-    e.foreground=color('red');
-    
-    // horizontal axis
-    drawaxis(x=-4:5,y=0,dir='u',tics='v')
+    calculaTrayectoria(p0, n, v0, alfa, e)
        
 endfunction
 
@@ -221,15 +204,18 @@ function parte4VelInicial()
     alfa =5             // angulo en grados
     e = 30;             // efecto en grados
     
-    [posX,velX] = posVelX(p0, v0, alfa, n, e)
+    vx = v0 * cos(alfa)
+    [posX,velX] = posVel(p0(1), vx, n, e, funcVelX)
     vel0X = velocidadEjeX(p0, alfa, n, e, posX(n))
     disp("Velocidad inicial Eje X Discretizada = " + string(vel0X))
     //disp("Velocidad inicial Eje X Real = " + string(v0))
     
-    [posY,velY] = posVelY(p0, v0, alfa, n)
+    vy = v0 * tan(alfa)
+    [posY,velY] = posVel(p0(2), vy, n, e, funcVelY)
     vel0Y = velocidadEjeY(p0, alfa, n, posY(n))
     disp("Velocidad inicial Eje Y Discretizada = " + string(vel0Y))
 
+    vz = v0 * sin(alfa)
     [posZ,velZ] = posVelZ(p0, v0, alfa, n)
     vel0Z = velocidadEjeZ(p0, alfa, n, posZ(n))
     disp("Velocidad inicial Eje Z Discretizada = " + string(vel0Z))    
