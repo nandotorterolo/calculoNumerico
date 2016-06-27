@@ -205,18 +205,21 @@ function parte4VelInicial()
     e = 30;             // efecto en grados
     
     vx = v0 * cos(alfa)
+    disp("vx" +string(vx))
     [posX,velX] = posVel(p0(1), vx, n, e, funcVelX)
     vel0X = velocidadEjeX(p0, alfa, n, e, posX(n))
     disp("Velocidad inicial Eje X Discretizada = " + string(vel0X))
-    //disp("Velocidad inicial Eje X Real = " + string(v0))
+    disp("Velocidad inicial Eje X Real = " + string(v0))
     
     vy = v0 * tan(alfa)
+    disp("vy" +string(vy))
     [posY,velY] = posVel(p0(2), vy, n, e, funcVelY)
     vel0Y = velocidadEjeY(p0, alfa, n, posY(n))
     disp("Velocidad inicial Eje Y Discretizada = " + string(vel0Y))
 
     vz = v0 * sin(alfa)
-    [posZ,velZ] = posVelZ(p0, v0, alfa, n)
+    disp("vx" +string(vz))
+    [posZ,velZ] = posVel(p0(3), vz, n, e, funcVelZ)
     vel0Z = velocidadEjeZ(p0, alfa, n, posZ(n))
     disp("Velocidad inicial Eje Z Discretizada = " + string(vel0Z))    
     
